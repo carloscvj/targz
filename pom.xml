@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>es.cvjpy.maven</groupId>
+        <artifactId>archiva</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>targz</artifactId>
+    <packaging>pom</packaging>
+
+    <name>targz - Empaquetar una aplicación</name>
+
+    <properties>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                    <executions>
+                        <execution>
+                            <id>limpiando</id>
+                            <phase>clean</phase>
+                            <configuration>
+                                <target>
+                                    <echo level="info" message="A BORRAR=${user.home}/local/${project.dkt.carpeta}-${project.dkt.version}"/>
+                                    <delete dir="${user.home}/local/${project.dkt.carpeta}-${project.dkt.version}"/>
+                                </target>
+                            </configuration>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>compilars</id>
+                            <phase>package</phase>
+                            <configuration>
+                                <target>
+                                    <ant antfile="src/main/distribuir/distribuir.xml" target="distribuir" usenativebasedir="false" inheritall="true"/>
+                                </target>
+                            </configuration>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>                   
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>src/main/assembly/dist.xml</descriptor>
+                        </descriptors>
+                    </configuration>             
+                    <executions>
+                        <execution>
+                            <id>make-assembly</id> 
+                            <phase>package</phase> 
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>        
+    </build>
+    <profiles>
+        <profile>
+            <id>snapshot-profile</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+   
+</project>
+
